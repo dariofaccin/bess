@@ -4,7 +4,7 @@
 # vim: syntax=dockerfile
 
 # Install CNDP dependencies and build CNDP.
-FROM ubuntu:22.04 AS cndp-build
+FROM ubuntu:24.04 AS cndp-build
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
@@ -39,7 +39,7 @@ RUN apt-get update && apt-get install -y \
 # Install libxdp
 WORKDIR /xdp-tools
 RUN git clone https://github.com/xdp-project/xdp-tools.git . && \
-    git checkout v1.2.2 && \
+    git checkout v1.4.3 && \
     ./configure && \
     make -j; PREFIX=/usr make -j install
 ENV PKG_CONFIG_PATH=/usr/lib/pkgconfig
@@ -49,7 +49,7 @@ WORKDIR /
 RUN git clone https://github.com/CloudNativeDataPlane/cndp.git
 WORKDIR /cndp
 # Use version of CNDP tested with BESS
-RUN git checkout d5ce4b9edc2e7ddb46a61b395deffafaf11a0500
+RUN git checkout v24.07.0
 # Build and install CNDP shared libraries
 RUN make && make install
 # Build and install CNDP static libraries
@@ -59,7 +59,7 @@ RUN make static_build=1 rebuild install
 WORKDIR /cndp/lang/go/stats/prometheus
 RUN go build prometheus.go
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Install CNDP dependencies
 ENV DEBIAN_FRONTEND=noninteractive
